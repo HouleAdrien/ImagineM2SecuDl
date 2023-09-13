@@ -4,6 +4,7 @@
 #include <list>
 #include <iostream>
 #include <algorithm>
+#include "entropie.h"
 
 int main(int argc, char **argv)
 {
@@ -22,48 +23,69 @@ int main(int argc, char **argv)
 	ImageBase imIn;
 	imIn.load(cNomImgLue);
 
-	std::list<int> posAlreadyUsed;
+    ImageBase imOut(imIn.getWidth(), imIn.getHeight(), imIn.getColor());
+
+    srand(key);
+    const int size = imIn.getWidth() * imIn.getHeight();
+    int *pixels = new int[size]; // Allouez dynamiquement de la mémoire
+
+    for (int x = 0; x < imIn.getWidth(); ++x)
+    {
+        for (int y = 0; y < imIn.getHeight(); ++y)
+        {
+            int j = y * imIn.getWidth() + x; // Calcul de l'indice correct
+            pixels[j] = imIn[x][y];
+        }
+    }
 
 
-	ImageBase imOut(imIn.getWidth(), imIn.getHeight(), imIn.getColor());
+    std::list<int> unusedPositions; // Créez une liste pour stocker les positions non utilisées
+    for (int i = 0; i < size; ++i)
+        unusedPositions.push_back(i); // Ajoutez tous les indices possibles à la liste
 
-	srand(key);
+    int *permutedPixels = new int[size]; // Pixels permutés
 
-	for(int x = 0; x < imIn.getHeight(); ++x)
+    for (int i = 0; i < size; ++i)
+    {
+        // Choisir une position aléatoire parmi les non utilisées
+        int randomPos = rand() % unusedPositions.size(); 
 
+        // Utilisez un itérateur pour accéder à la position choisie
+        auto it = std::next(unusedPositions.begin(), randomPos);
+        int selectedPos = *it;
 
-		for(int y = 0; y < imIn.getWidth(); ++y)
-		{
-			int m = y*x;
-			int newvalue;
+        // Assignez le pixel original à la nouvelle position permutée
+        permutedPixels[selectedPos] = pixels[i];
 
-			if( m == 0){
-				 newvalue = rand();
-			}else{
-				 newvalue = rand() % (m);
-			}
-			
+        // Supprimez la position utilisée de la liste
+        unusedPositions.erase(it);
+    }
 
-			if(std::find(posAlreadyUsed.begin(), posAlreadyUsed.end(), m) != posAlreadyUsed.end()){
+    // Copiez les valeurs modifiées dans l'image de sortie
+    for (int x = 0; x < imIn.getWidth(); ++x)
+    {
+        for (int y = 0; y < imIn.getHeight(); ++y)
+        {
+            int j = y * imIn.getWidth() + x; // Calcul de l'indice correct
+            imOut[x][y] = permutedPixels[j];
+        }
+    }
 
-				//while(std::find(posAlreadyUsed.begin(), posAlreadyUsed.end(), m) != posAlreadyUsed.end()){
-					m =m+1;
-				//}
+    // Libérez la mémoire allouée dynamiquement
+    delete[] pixels;
+	delete permutedPixels;
 
-				newvalue = rand() % (m);
-				imOut[x][y] = newvalue;
+	Entropie entropie;
 
-			}else{
-				imOut[x][y] = newvalue;
-				posAlreadyUsed.push_back(m);
-			}
+	double entropy1 =  entropie.GetEntropieOfImage(imIn,128);
 
-		}
-		
-	imOut.save(cNomImgEcrite);
+	std::cout << entropy1;
 
+	double entropy2 =  entropie.GetEntropieOfImage(imOut,128);
 
+	std::cout << entropy2;
 
+    imOut.save(cNomImgEcrite);
 
-	return 0;
+    return 0;
 }
