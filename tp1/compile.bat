@@ -11,7 +11,7 @@ g++ -o testsubstitution.exe ImageBase.o substitution.o
 
 testsubstitution.exe 01.pgm 128 out.pgm
 
-g++ -c ImageBase.cpp invsubsti.cpp
-g++ -o testinvsubstitution.exe ImageBase.o invsubsti.o
+g++ -c ImageBase.cpp invsubsti.cpp entropie.cpp
+g++ -o testinvsubstitution.exe ImageBase.o invsubsti.o entropie.o
 
-testinvsubstitution.exe out.pgm 128 test.pgm
+testinvsubstitution.exe dieu.pgm test.pgm

@@ -8,10 +8,13 @@ Entropie::Entropie(){
 	
 }
 
-double Entropie::GetEntropieOfImage(ImageBase image){
-	int nTaille = image.getWidth() * image.getHeight();
+double Entropie::GetEntropieOfImage(ImageBase &image, int i){
 
-	int *pixels = new int[nTaille];
+	const int nTaille = image.getWidth() * image.getHeight();
+
+    std::cout<< "calcul de : "<< i <<std::endl ;
+
+	int* pixels = new int[nTaille];
 
     for (int x = 0; x < image.getWidth(); ++x)
     {
@@ -19,10 +22,9 @@ double Entropie::GetEntropieOfImage(ImageBase image){
         {
             int j = y * image.getWidth() + x;
             pixels[j] = image[x][y];
+            
         }
     }
-
-
 
 	int histo[256];
     double pourcentage = 0.98 * nTaille;
