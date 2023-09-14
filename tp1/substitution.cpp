@@ -1,4 +1,4 @@
-#include "ImageBase.h"
+#include "image_ppm.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -17,50 +17,44 @@ int main(int argc, char **argv)
     sscanf(argv[2], "%d", &key);
     sscanf(argv[3], "%s", cNomImgEcrite);
 
-    ImageBase imIn;
-    imIn.load(cNomImgLue);
+    OCTET *ImgIn;
+    OCTET *ImgOut;
 
-    ImageBase imOut(imIn.getWidth(), imIn.getHeight(), imIn.getColor());
+    int nH, nW, nTaille;
+    lire_nb_lignes_colonnes_image_pgm(cNomImgLue, &nH, &nW);
+    nTaille = nH * nW;
+
+    allocation_tableau(ImgIn, OCTET, nTaille);
+    lire_image_pgm(cNomImgLue, ImgIn, nH * nW);
+
+    allocation_tableau(ImgOut, OCTET, nTaille);
 
     srand(key);
-    const int size = imIn.getWidth() * imIn.getHeight();
-    int *pixels = new int[size]; // Allouez dynamiquement de la mémoire
 
-    for (int x = 0; x < imIn.getWidth(); ++x)
-    {
-        for (int y = 0; y < imIn.getHeight(); ++y)
-        {
-            int j = y * imIn.getWidth() + x; // Calcul de l'indice correct
-            pixels[j] = imIn[x][y];
-        }
-    }
 
-    for (int i = 0; i < size; ++i)
+    for (int i = 0; i < nTaille; ++i)
     {
         if (i == 0)
         {
-            pixels[i] = ((rand() % 256) + pixels[i]) % 256;
+            ImgIn[i] = ((rand() % 256) + ImgIn[i]) % 256;
         }
         else
         {
-            pixels[i] = ((pixels[i - 1] + pixels[i]) + (rand() % 256)) % 256;
+            ImgIn[i] = ((ImgIn[i - 1] + ImgIn[i]) + (rand() % 256)) % 256;
         }
     }
 
-    // Copiez les valeurs modifiées dans l'image de sortie
-    for (int x = 0; x < imIn.getWidth(); ++x)
-    {
-        for (int y = 0; y < imIn.getHeight(); ++y)
+        for (int i = 0; i < nTaille; ++i)
         {
-            int j = y * imIn.getWidth() + x; // Calcul de l'indice correct
-            imOut[x][y] = pixels[j];
+            ImgOut[i] = ImgIn[i];
         }
-    }
+    
 
-    // Libérez la mémoire allouée dynamiquement
-    delete[] pixels;
 
-    imOut.save(cNomImgEcrite);
+    ecrire_image_pgm(cNomImgEcrite, ImgOut, nH , nW);
+
+    free(ImgIn);
+    free(ImgOut);
 
     return 0;
 }

@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <iostream>
-#include <stdlib.h>
 #include <math.h>
 #include "entropie.h"
 
@@ -8,25 +5,10 @@ Entropie::Entropie(){
 	
 }
 
-double Entropie::GetEntropieOfImage(ImageBase &image, int i){
+double Entropie::GetEntropieOfImage(OCTET *image, int nTaille){
 
-	const int nTaille = image.getWidth() * image.getHeight();
 
-    std::cout<< "calcul de : "<< i <<std::endl ;
-
-	int* pixels = new int[nTaille];
-
-    for (int x = 0; x < image.getWidth(); ++x)
-    {
-        for (int y = 0; y < image.getHeight(); ++y)
-        {
-            int j = y * image.getWidth() + x;
-            pixels[j] = image[x][y];
-            
-        }
-    }
-
-	int histo[256];
+    int histo[256];
     double pourcentage = 0.98 * nTaille;
 
     for (int i = 0; i < 256; i++){
@@ -34,7 +16,7 @@ double Entropie::GetEntropieOfImage(ImageBase &image, int i){
     }
 
     for(int i = 0; i < nTaille; i++){
-        histo[pixels[i]]++;
+        histo[image[i]]++;
     }
 
     double entropie = 0;
@@ -50,7 +32,6 @@ double Entropie::GetEntropieOfImage(ImageBase &image, int i){
             entropie -= temp;
         }
     }
-    delete[] pixels;
 
     return entropie;
 

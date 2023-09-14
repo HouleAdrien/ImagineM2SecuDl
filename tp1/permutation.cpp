@@ -1,4 +1,3 @@
-#include "ImageBase.h"
 #include <stdio.h>
 #include <stdlib.h> 
 #include <list>
@@ -20,32 +19,28 @@ int main(int argc, char **argv)
 	sscanf (argv[2],"%d",&key);
 	sscanf (argv[3],"%s",cNomImgEcrite);
 	
-	ImageBase imIn;
-	imIn.load(cNomImgLue);
+    OCTET *ImgIn;
+    OCTET *ImgOut;
 
-    ImageBase imOut(imIn.getWidth(), imIn.getHeight(), imIn.getColor());
+    int nH, nW, nTaille;
+    lire_nb_lignes_colonnes_image_pgm(cNomImgLue, &nH, &nW);
+    nTaille = nH * nW;
+
+    allocation_tableau(ImgIn, OCTET, nTaille);
+    lire_image_pgm(cNomImgLue, ImgIn, nH * nW);
+
+    allocation_tableau(ImgOut, OCTET, nTaille);
 
     srand(key);
-    const int size = imIn.getWidth() * imIn.getHeight();
-    int *pixels = new int[size]; // Allouez dynamiquement de la mémoire
-
-    for (int x = 0; x < imIn.getWidth(); ++x)
-    {
-        for (int y = 0; y < imIn.getHeight(); ++y)
-        {
-            int j = y * imIn.getWidth() + x; // Calcul de l'indice correct
-            pixels[j] = imIn[x][y];
-        }
-    }
 
 
     std::list<int> unusedPositions; // Créez une liste pour stocker les positions non utilisées
-    for (int i = 0; i < size; ++i)
+    for (int i = 0; i < nTaille; ++i)
         unusedPositions.push_back(i); // Ajoutez tous les indices possibles à la liste
 
-    int *permutedPixels = new int[size]; // Pixels permutés
+    int *permutedPixels = new int[nTaille]; // Pixels permutés
 
-    for (int i = 0; i < size; ++i)
+    for (int i = 0; i < nTaille; ++i)
     {
         // Choisir une position aléatoire parmi les non utilisées
         int randomPos = rand() % unusedPositions.size(); 
@@ -55,37 +50,35 @@ int main(int argc, char **argv)
         int selectedPos = *it;
 
         // Assignez le pixel original à la nouvelle position permutée
-        permutedPixels[selectedPos] = pixels[i];
+        permutedPixels[selectedPos] = ImgIn[i];
 
         // Supprimez la position utilisée de la liste
         unusedPositions.erase(it);
     }
 
     // Copiez les valeurs modifiées dans l'image de sortie
-    for (int x = 0; x < imIn.getWidth(); ++x)
+    for (int i = 0; i < nTaille; i++)
     {
-        for (int y = 0; y < imIn.getHeight(); ++y)
-        {
-            int j = y * imIn.getWidth() + x; // Calcul de l'indice correct
-            imOut[x][y] = permutedPixels[j];
-        }
+        ImgOut[i] = permutedPixels[i];
     }
 
-    // Libérez la mémoire allouée dynamiquement
-    delete[] pixels;
+
 	delete permutedPixels;
 
 	Entropie entropie;
 
-	double entropy1 =  entropie.GetEntropieOfImage(imIn,128);
+	double entropy1 =  entropie.GetEntropieOfImage(ImgIn,nTaille);
 
 	std::cout << entropy1;
 
-	double entropy2 =  entropie.GetEntropieOfImage(imOut,128);
+	double entropy2 =  entropie.GetEntropieOfImage(ImgOut,nTaille);
 
 	std::cout << entropy2;
 
-    imOut.save(cNomImgEcrite);
+    ecrire_image_pgm(cNomImgEcrite, ImgOut, nH , nW);
+
+    free(ImgIn);
+    free(ImgOut);
 
     return 0;
 }

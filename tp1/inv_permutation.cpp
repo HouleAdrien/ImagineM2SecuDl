@@ -1,4 +1,3 @@
-#include "ImageBase.h"
 #include <stdio.h>
 #include <stdlib.h> 
 #include <list>
@@ -20,21 +19,7 @@ int main(int argc, char **argv)
 	sscanf (argv[2],"%d",&key);
 	sscanf (argv[3],"%s",cNomImgEcrite);
 	
-	ImageBase imIn;
-	imIn.load(cNomImgLue);
 
-	ImageBase imOut(imIn.getWidth(), imIn.getHeight(), imIn.getColor());
-
-	srand(key);
-	const int size = imIn.getWidth() * imIn.getHeight();
-
-	Entropie entropie;
-	double entropy1 =  entropie.GetEntropieOfImage(imIn,128);
-	std::cout << entropy1;
-	double entropy2 =  entropie.GetEntropieOfImage(imOut,128);
-	std::cout << entropy2;
-
-	imOut.save(cNomImgEcrite);
 
 	return 0;
 }

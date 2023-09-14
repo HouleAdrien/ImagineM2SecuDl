@@ -1,9 +1,9 @@
-#include "ImageBase.h"
+#include "image_ppm.h"
 
 class Entropie 
 {
 	public:
 		Entropie();
-		double GetEntropieOfImage(ImageBase &image, int i);
+		double GetEntropieOfImage(OCTET *image,int nTaille);
 
 };
