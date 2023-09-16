@@ -36,23 +36,20 @@ int main(int argc, char **argv)
 
     std::list<int> unusedPositions; // Créez une liste pour stocker les positions non utilisées
     for (int i = 0; i < nTaille; ++i)
-        unusedPositions.push_back(i); // Ajoutez tous les indices possibles à la liste
+        unusedPositions.push_back(i);
 
-    int *permutedPixels = new int[nTaille]; // Pixels permutés
+    int *permutedPixels = new int[nTaille];
 
     for (int i = 0; i < nTaille; ++i)
     {
         // Choisir une position aléatoire parmi les non utilisées
         int randomPos = rand() % unusedPositions.size(); 
 
-        // Utilisez un itérateur pour accéder à la position choisie
         auto it = std::next(unusedPositions.begin(), randomPos);
         int selectedPos = *it;
 
-        // Assignez le pixel original à la nouvelle position permutée
         permutedPixels[selectedPos] = ImgIn[i];
 
-        // Supprimez la position utilisée de la liste
         unusedPositions.erase(it);
     }
 
@@ -69,11 +66,11 @@ int main(int argc, char **argv)
 
 	double entropy1 =  entropie.GetEntropieOfImage(ImgIn,nTaille);
 
-	std::cout << entropy1;
+	std::cout << "Entropie image avant permutation : " << entropy1 << std::endl;
 
 	double entropy2 =  entropie.GetEntropieOfImage(ImgOut,nTaille);
 
-	std::cout << entropy2;
+	std::cout << "Entropie image après permutation : " << entropy2 << std::endl;
 
     ecrire_image_pgm(cNomImgEcrite, ImgOut, nH , nW);
 

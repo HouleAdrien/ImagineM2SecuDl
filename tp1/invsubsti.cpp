@@ -61,8 +61,7 @@ int main(int argc, char **argv)
 
 
 			double entropy =  entropie.GetEntropieOfImage(currentImage,nTaille);
-
-			std::cout << "Key " << currentKey << " Entropy: " << entropy << std::endl;
+			
 			free(currentImage);
 			if (entropy < minEntropy) {
 				minEntropy = entropy;

@@ -37,7 +37,7 @@ int main(int argc, char* argv[]){
 
     eqm /= nTaille;
 
-    std::cout<<eqm<<std::endl;
+    std::cout<<"eqm : "<< eqm<<std::endl;
 
     double PSNR = 10 * log10((VALMAX*VALMAX)/eqm);
 
