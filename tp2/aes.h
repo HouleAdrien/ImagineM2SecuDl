@@ -63,7 +63,7 @@ class AES {
   unsigned char *VectorToArray(std::vector<unsigned char> &a);
 
  public:
-  explicit AES(const AESKeyLength keyLength = AESKeyLength::AES_256);
+  explicit AES(const AESKeyLength keyLength = AESKeyLength::AES_128);
 
   unsigned char *EncryptECB(const unsigned char in[], unsigned int inLen,
                             const unsigned char key[]);

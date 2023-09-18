@@ -1,12 +1,29 @@
-#include <math.h>
-#include "entropie.h"
+#include <stdio.h>
+#include "image_ppm.h"
+#include <iostream>
+#include <stdlib.h>
 
-Entropie::Entropie(){
-	
-}
 
-double Entropie::GetEntropieOfImage(OCTET *image, int nTaille){
 
+int main(int argc, char* argv[])
+{
+    char cNomImgLue[250];
+    int nH, nW, nTaille;
+    
+    if (argc != 2){
+        printf("Usage: ImageIn.pgm\n"); 
+        exit (1) ;
+    }
+    
+    sscanf (argv[1],"%s",cNomImgLue) ;
+
+    OCTET *ImgIn;
+    
+    lire_nb_lignes_colonnes_image_pgm(cNomImgLue, &nH, &nW);
+    nTaille = nH * nW;
+
+    allocation_tableau(ImgIn, OCTET, nTaille);
+    lire_image_pgm(cNomImgLue, ImgIn, nH * nW);
 
     int histo[256];
     double pourcentage = 0.98 * nTaille;
@@ -16,7 +33,7 @@ double Entropie::GetEntropieOfImage(OCTET *image, int nTaille){
     }
 
     for(int i = 0; i < nTaille; i++){
-        histo[image[i]]++;
+        histo[ImgIn[i]]++;
     }
 
     double entropie = 0;
@@ -33,6 +50,7 @@ double Entropie::GetEntropieOfImage(OCTET *image, int nTaille){
         }
     }
 
-    return entropie;
-
+    std::cout<<"L'entropie de l'image est de : "<<entropie<<std::endl;
+    free(ImgIn); 
+    return 1;
 }
