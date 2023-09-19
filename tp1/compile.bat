@@ -7,14 +7,14 @@ del outpermu.pgm
 del outsubti.pgm
 del test.pgm
 
-g++ -c image_ppm.c entropie.cpp
+g++ -c image_ppm.c entropie.cpp PSNR.cpp histo.cpp 
 
 g++ -c permutation.cpp 
 g++ -o testpermutation.exe image_ppm.o permutation.o entropie.o
 
 testpermutation.exe baboon.pgm 128 outpermu.pgm
 
-g++ -c PSNR.cpp 
+
 g++ -o PSNR.exe image_ppm.o PSNR.o
 
 PSNR.exe baboon.pgm outpermu.pgm
