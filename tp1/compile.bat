@@ -13,8 +13,6 @@ g++ -c permutation.cpp
 g++ -o testpermutation.exe image_ppm.o permutation.o entropie.o
 
 testpermutation.exe baboon.pgm 128 outpermu.pgm
-testpermutation.exe lena.pgm 29 outpermulena.pgm
-testpermutation.exe 01.pgm 210 outpermu01.pgm
 
 g++ -c PSNR.cpp 
 g++ -o PSNR.exe image_ppm.o PSNR.o
@@ -27,13 +25,9 @@ g++ -o testinvpermutation.exe image_ppm.o inv_permutation.o entropie.o
 testinvpermutation.exe outpermu.pgm 128 restoredpermu.pgm
 
 g++ -c substitution.cpp
-g++ -o testsubstitution.exe image_ppm.o substitution.o
+g++ -o testsubstitution.exe image_ppm.o substitution.o entropie.o
 
 testsubstitution.exe baboon.pgm 128 outsubti.pgm
-
-
-testsubstitution.exe baboon.pgm 29 outsubstilena.pgm
-testsubstitution.exe baboon.pgm 210 outsubsti01.pgm
 
 PSNR.exe baboon.pgm outsubti.pgm
 
@@ -44,3 +38,7 @@ testinvsubstitution.exe outsubti.pgm restoredsubti.pgm
 
 g++ -c histo.cpp 
 g++ -o testhisto.exe image_ppm.o histo.o
+
+
+testsubstitution.exe 05.pgm 109 outsubtiart.pgm
+testinvsubstitution.exe outsubtiart.pgm restoredsubtiart.pgm

@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include "entropie.h"
+
 
 int main(int argc, char **argv)
 {
@@ -49,7 +51,11 @@ int main(int argc, char **argv)
             ImgOut[i] = ImgIn[i];
         }
     
+    Entropie entropie;
 
+	double entropy =  entropie.GetEntropieOfImage(ImgOut,nTaille);
+
+    std::cout << "entropie après subtitution : " << entropy << std::endl;
 
     ecrire_image_pgm(cNomImgEcrite, ImgOut, nH , nW);
 
