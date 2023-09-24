@@ -65,6 +65,8 @@ class AES {
  public:
   explicit AES(const AESKeyLength keyLength = AESKeyLength::AES_128);
 
+  void AddNoiseToEncryptedImage(unsigned char *encryptedImage, unsigned int imageLen);
+
   unsigned char *EncryptECB(const unsigned char in[], unsigned int inLen,
                             const unsigned char key[]);
 
@@ -104,6 +106,18 @@ class AES {
   std::vector<unsigned char> DecryptCFB(std::vector<unsigned char> in,
                                         std::vector<unsigned char> key,
                                         std::vector<unsigned char> iv);
+
+unsigned char* EncryptCTR(const unsigned char in[], unsigned int inLen, 
+                              const unsigned char key[], const unsigned char* nonce);
+    
+unsigned char* DecryptCTR(const unsigned char in[], unsigned int inLen, 
+                              const unsigned char key[], const unsigned char* nonce);
+
+unsigned char* EncryptOFC(const unsigned char in[], unsigned int inLen, 
+                              const unsigned char key[], const unsigned char* iv);
+
+unsigned char* DecryptOFC(const unsigned char in[], unsigned int inLen, 
+                              const unsigned char key[], const unsigned char* iv);
 
   void printHexArray(unsigned char a[], unsigned int n);
 

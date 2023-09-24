@@ -17,6 +17,16 @@ AES::AES(const AESKeyLength keyLength) {
   }
 }
 
+void AES::AddNoiseToEncryptedImage(unsigned char *encryptedImage, unsigned int imageLen) {
+    for (unsigned int i = 0; i < imageLen; i += blockBytesLen) {
+      // on modifie la valeur du premier byts de chaque bloc
+        if(encryptedImage[i] & 0x01) { 
+            encryptedImage[i] -= 1;
+        } 
+    }
+}
+
+
 unsigned char *AES::EncryptECB(const unsigned char in[], unsigned int inLen,
                                const unsigned char key[]) {
   CheckLength(inLen);
@@ -128,6 +138,64 @@ unsigned char *AES::DecryptCFB(const unsigned char in[], unsigned int inLen,
 
   return out;
 }
+
+// For OFC (Offset Feedback Mode):
+unsigned char *AES::EncryptOFC(const unsigned char in[], unsigned int inLen, 
+                               const unsigned char key[], 
+                               const unsigned char *iv) {
+  CheckLength(inLen);
+  unsigned char *out = new unsigned char[inLen];
+  unsigned char block[blockBytesLen];
+  unsigned char *roundKeys = new unsigned char[4 * Nb * (Nr + 1)];
+  KeyExpansion(key, roundKeys);
+  memcpy(block, iv, blockBytesLen);
+  
+  for (unsigned int i = 0; i < inLen; i += blockBytesLen) {
+    EncryptBlock(block, block, roundKeys);
+    XorBlocks(block, in + i, out + i, blockBytesLen);
+  }
+  
+  delete[] roundKeys;
+
+  return out;
+}
+
+unsigned char *AES::DecryptOFC(const unsigned char in[], unsigned int inLen, 
+                               const unsigned char key[], 
+                               const unsigned char *iv) {
+  return EncryptOFC(in, inLen, key, iv); // Decrypt in OFC is same as encrypt
+}
+
+// For CTR (Counter Mode):
+unsigned char *AES::EncryptCTR(const unsigned char in[], unsigned int inLen, 
+                               const unsigned char key[], 
+                               const unsigned char *nonce) {
+  CheckLength(inLen);
+  unsigned char *out = new unsigned char[inLen];
+  unsigned char block[blockBytesLen];
+  unsigned char *roundKeys = new unsigned char[4 * Nb * (Nr + 1)];
+  KeyExpansion(key, roundKeys);
+  memcpy(block, nonce, blockBytesLen - sizeof(unsigned int));
+  unsigned int counter = 0;
+  
+  for (unsigned int i = 0; i < inLen; i += blockBytesLen) {
+    *(unsigned int *)(block + blockBytesLen - sizeof(unsigned int)) = counter;
+    EncryptBlock(block, block, roundKeys);
+    XorBlocks(block, in + i, out + i, blockBytesLen);
+    counter++;
+  }
+
+  delete[] roundKeys;
+
+  return out;
+}
+
+unsigned char *AES::DecryptCTR(const unsigned char in[], unsigned int inLen, 
+                               const unsigned char key[], 
+                               const unsigned char *nonce) {
+  return EncryptCTR(in, inLen, key, nonce); // Decrypt in CTR is same as encrypt
+}
+
 
 void AES::CheckLength(unsigned int len) {
   if (len % blockBytesLen != 0) {
