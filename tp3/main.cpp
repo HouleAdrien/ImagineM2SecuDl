@@ -47,17 +47,24 @@ void insererMessageBinaire(OCTET* imgin,OCTET* imgout,unsigned char* message,int
      }
 }
 
-unsigned char* textToBinary(const std::string& text) {
-
-    unsigned char *binary = new unsigned char[text.length() * 8];
+unsigned char* textToBinary(const std::string& text, int nTaille) {
+    unsigned char *binary = new unsigned char[nTaille];
     int index = 0;
+    
     for(char c : text) {
         for(int i = 7; i >= 0; i--) {
             binary[index++] = (c & (1 << i)) ? 1 : 0;
         }
     }
+    
+    // Remplir avec des zéros si le texte est plus court que l'image
+    while(index < nTaille) {
+        binary[index++] = 0;
+    }
+    
     return binary;
 }
+
 
 std::string binaryToText(unsigned char* binary, int length) {
     std::string text;
@@ -93,13 +100,10 @@ int main(int argc, char **argv)
     std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     file.close();
 
-    std::cout << content.length() * 8;
-    unsigned char *message = textToBinary(content);    
 
     OCTET *ImgIn;
     OCTET *ImgOut;
     OCTET *ImgOut2;
-
 
 
     int nH, nW, nTaille;
@@ -111,6 +115,10 @@ int main(int argc, char **argv)
 
     allocation_tableau(ImgOut, OCTET, nTaille);
     allocation_tableau(ImgOut2, OCTET, nTaille);
+
+    
+    std::cout << content.length() * 8;
+    unsigned char *message = textToBinary(content,nTaille);    
 
 
     insererMessageBinaire(ImgIn,ImgOut,message,nTaille,0);

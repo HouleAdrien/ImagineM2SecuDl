@@ -1,1 +1,1 @@
-test message
+le sens de la vie est 42
